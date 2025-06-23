@@ -21,8 +21,8 @@ defmodule DriversLicenseValidation.Formats do
     ],
     "CO" => [
       [{:numeric, 9}],
-      [{:alpha, 1}, {:numeric, 3}],
-      [{:alpha, 2}, {:numeric, 2}]
+      [{:alpha, 1}, {:numeric, 3, 6}],
+      [{:alpha, 2}, {:numeric, 2, 5}]
     ],
     "CT" => [
       [{:numeric, 9}]
@@ -45,11 +45,11 @@ defmodule DriversLicenseValidation.Formats do
       [{:numeric, 9}]
     ],
     "ID" => [
-      [{:alpha, 2}, {:numeric, 6}],
+      [{:alpha, 2}, {:numeric, 6}, {:alpha, 1}],
       [{:numeric, 9}]
     ],
     "IL" => [
-      [{:alpha, 1}, {:numeric, 11}]
+      [{:alpha, 1}, {:numeric, 11, 12}]
     ],
     "IN" => [
       [{:alpha, 1}, {:numeric, 9}],
@@ -57,10 +57,10 @@ defmodule DriversLicenseValidation.Formats do
     ],
     "IA" => [
       [{:numeric, 9}],
-      [{:alpha, 3}, {:numeric, 2}]
+      [{:numeric, 3}, {:alpha, 2}, {:numeric, 4}]
     ],
     "KS" => [
-      [{:alpha, 1}, {:numeric, 1}],
+      [{:alpha, 1}, {:numeric, 1}, {:alpha, 1}, {:numeric, 1}, {:alpha, 1}],
       [{:alpha, 1}, {:numeric, 8}],
       [{:numeric, 9}]
     ],
@@ -74,7 +74,7 @@ defmodule DriversLicenseValidation.Formats do
     ],
     "ME" => [
       [{:numeric, 7}],
-      [{:alpha, 7}, {:numeric, 1}],
+      [{:alpha, 1}, {:numeric, 7}],
       [{:numeric, 8}]
     ],
     "MD" => [
@@ -95,11 +95,11 @@ defmodule DriversLicenseValidation.Formats do
       [{:numeric, 9}]
     ],
     "MO" => [
-      [{:alpha, 3}, {:numeric, 1}],
-      [{:alpha, 1}, {:numeric, 5}],
-      [{:alpha, 1}, {:numeric, 6}],
-      [{:alpha, 8}, {:numeric, 2}],
-      [{:alpha, 9}, {:numeric, 1}],
+      [{:numeric, 3}, {:alpha, 1}, {:numeric, 6}],
+      [{:alpha, 1}, {:numeric, 5, 9}],
+      [{:alpha, 1}, {:numeric, 6}, {:literal, "R"}],
+      [{:numeric, 8}, {:alpha, 2}],
+      [{:numeric, 9}, {:alpha, 1}],
       [{:numeric, 9}]
     ],
     "MT" => [
@@ -109,12 +109,12 @@ defmodule DriversLicenseValidation.Formats do
       [{:numeric, 13,14}]
     ],
     "NE" => [
-      [{:alpha, 1}, {:numeric, 6}]
+      [{:alpha, 1}, {:numeric, 6, 8}]
     ],
     "NV" => [
-      [{:numeric, 9,10}],
+      [{:numeric, 9, 10}],
       [{:numeric, 12}],
-      [{:numeric, 8}]
+      [{:literal, "X"}, {:numeric, 8}]
     ],
     "NH" => [
       [{:numeric, 2}, {:alpha, 3}, {:numeric, 5}]
@@ -130,7 +130,7 @@ defmodule DriversLicenseValidation.Formats do
       [{:alpha, 1}, {:numeric, 18}],
       [{:numeric, 8,9}],
       [{:numeric, 16}],
-      [{:alpha, 8}, {:numeric, 0}]
+      [{:alpha, 8}]
     ],
     "NC" => [
       [{:numeric, 1,12}]
@@ -140,8 +140,8 @@ defmodule DriversLicenseValidation.Formats do
       [{:numeric, 9}]
     ],
     "OH" => [
-      [{:alpha, 1}, {:numeric, 4}],
-      [{:alpha, 2}, {:numeric, 3}],
+      [{:alpha, 1}, {:numeric, 4, 8}],
+      [{:alpha, 2}, {:numeric, 3, 7}],
       [{:numeric, 8}]
     ],
     "OK" => [
@@ -176,10 +176,10 @@ defmodule DriversLicenseValidation.Formats do
     ],
     "VT" => [
       [{:numeric, 8}],
-      [{:numeric, 7}]
+      [{:numeric, 7}, {:literal, "A"}]
     ],
     "VA" => [
-      [{:alpha, 1}, {:numeric, 8}],
+      [{:alpha, 1}, {:numeric, 8, 11}],
       [{:numeric, 9}]
     ],
     "WA" => [
@@ -187,7 +187,7 @@ defmodule DriversLicenseValidation.Formats do
     ],
     "WV" => [
       [{:numeric, 7}],
-      [{:alpha, 1}, {:numeric, 2}]
+      [{:alpha, 1, 2}, {:numeric, 5, 6}]
     ],
     "WI" => [
       [{:alpha, 1}, {:numeric, 13}]

@@ -20,22 +20,24 @@ defmodule DriversLicenseValidation.DOBExtractors do
 
   def florida(<<_::binary-size(1), yy::binary-size(2), _mid::binary-size(5), yydoy::binary-size(3), _::binary>>, _ctx) do
     with {year, _} <- Integer.parse(yy),
-        {code, _} <- Integer.parse(yydoy),
-        {:ok, base} <- Date.new(1900 + year, 1, 1)
+      {code, _} <- Integer.parse(yydoy),
+      {:ok, base} <- Date.new(infer_full_year(year), 1, 1)
     do
       day_of_year = if code > 500, do: code - 500, else: code
       Date.add(base, day_of_year - 1)
     else
       _ -> Logger.warn("[DLValidator] FL/WI DOB parse failed")
-          "N/A"
+        "N/A"
     end
   end
 
   def illinois(<<_::binary-size(7), doy::binary-size(3), _::binary>>, _ctx) do
     with {d, _} <- Integer.parse(doy),
-         month <- div(d, 31),
-         day <- rem(d, 31),
-         {:ok, date} <- Date.new(1900 + rem(d, 100), month + 1, day + 1) do
+        year = infer_full_year(rem(d, 100)),
+        month = div(d, 31) + 1,
+        day = rem(d, 31) + 1,
+        {:ok, date} <- Date.new(year, month, day)
+    do
       date
     else
       _ -> Logger.warn("[DLValidator] IL DOB parse failed"); "N/A"
@@ -43,12 +45,28 @@ defmodule DriversLicenseValidation.DOBExtractors do
   end
 
   def md_mi(<<_::binary-size(10), code::binary-size(3), _::binary>>, _ctx) do
-    dob_map = %{"002" => {1, 1}, "007" => {1, 2}, "822" => {1, 31}, "086" => {2, 1}, "156" => {2, 29}}
+    dob_map = %{
+      "002" => {1, 1},
+      "007" => {1, 2},
+      "822" => {1, 31},
+      "086" => {2, 1},
+      "156" => {2, 29}
+    }
+
     case Map.get(dob_map, code) do
-      {m, d} -> Date.new!(1900, m, d)
-      _ -> Logger.warn("[DLValidator] MD/MI DOB code not found"); "N/A"
+      {m, d} ->
+        Date.new(1900, m, d)
+        |> case do
+          {:ok, date} -> date
+          _ -> Logger.warn("[DLValidator] MD/MI date creation failed"); "N/A"
+        end
+
+      _ ->
+        Logger.warn("[DLValidator] MD/MI DOB code not found")
+        "N/A"
     end
   end
+
 
   def new_jersey(<<_::binary-size(10), mm::binary-size(2), yy::binary-size(2), _::binary>>, _ctx) do
     with {m, _} <- Integer.parse(mm),
