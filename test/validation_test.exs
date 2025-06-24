@@ -22,8 +22,15 @@ defmodule DriversLicenseValidationTest do
     end
 
     test "IL format: 1 alpha + 11 numeric" do
-      assert DriversLicenseValidation.valid?("IL", "I85107123456")
-      assert DriversLicenseValidation.date_of_birth("IL", "I85107123456") != "N/A"
+      license = "I85000000981"   # YY = 85, DOY = 098 = April 6
+      assert DriversLicenseValidation.valid?("IL", license)
+      assert DriversLicenseValidation.date_of_birth("IL", license) == ~D[1985-04-06]
+    end
+
+    test "IL format: 11 numeric + 1 alpha (alt format)" do
+      license = "12345685098A"   # YY = 85, DOY = 098 = April 6
+      assert DriversLicenseValidation.valid?("IL", license)
+      assert DriversLicenseValidation.date_of_birth("IL", license) == ~D[1985-04-06]
     end
 
     test "MD/MI format with mapped code" do
@@ -44,26 +51,89 @@ defmodule DriversLicenseValidationTest do
       assert DriversLicenseValidation.date_of_birth("NJ", number) == ~D[2025-05-01]
     end
 
+    test "WA DL with valid encoded name and DOB" do
+      number = "SMITHJ821BC"
+      dob = ~D[1980-01-01]
+      assert DriversLicenseValidation.valid?("WA", number)
+      assert DriversLicenseValidation.date_of_birth("WA", number, first_name: "John", last_name: "Smith", known_dob: dob) == dob
+    end
+
+    test "WA DL fallback when decoding fails" do
+      number = "FAKEJ821ZZ"
+      fallback = ~D[1975-06-15]
+
+      log =
+        ExUnit.CaptureLog.capture_log(fn ->
+          assert DriversLicenseValidation.date_of_birth("WA", number, known_dob: fallback) == fallback
+        end)
+
+      assert log =~ "[DLValidator] WA DOB parse failed"
+    end
+
     test "WA format and fallback to known DOB" do
       number = "SMITHJ821BC"
       assert DriversLicenseValidation.valid?("WA", number)
       assert DriversLicenseValidation.date_of_birth("WA", number, first_name: "John", last_name: "Smith", known_dob: ~D[1980-01-01]) == ~D[1980-01-01]
     end
 
-    test "NH format with fallback DOB" do
+    test "WA DL with month character 'T' (February)" do
+      number = "SMITHJ821CT"
+      assert DriversLicenseValidation.date_of_birth("WA", number, first_name: "John", last_name: "Smith", known_dob: ~D[1980-02-01]) == ~D[1980-02-01]
+    end
+
+    test "WA DL with lowercase context names" do
+      number = "SMITHJ821BC"
+      assert DriversLicenseValidation.date_of_birth("WA", number, first_name: "john", last_name: "smith", known_dob: ~D[1980-01-01]) == ~D[1980-01-01]
+    end
+
+    test "WA DL with mismatched name" do
+      number = "SMITHJ821BC"
+      fallback = ~D[1980-01-01]
+
+      assert DriversLicenseValidation.date_of_birth("WA", number, first_name: "Alice", last_name: "Brown", known_dob: fallback) == fallback
+    end
+
+    test "NH DL with correctly encoded name and DOB" do
       number = "12ABC12345"
+      dob = ~D[1990-06-15]
       assert DriversLicenseValidation.valid?("NH", number)
-      assert DriversLicenseValidation.date_of_birth("NH", number, known_dob: ~D[1990-06-15]) == ~D[1990-06-15]
+      assert DriversLicenseValidation.date_of_birth("NH", number, first_name: "John", last_name: "Smith", known_dob: dob) == dob
     end
 
     test "CT format with fallback DOB" do
-      assert DriversLicenseValidation.valid?("CT", "123456789")
-      assert DriversLicenseValidation.date_of_birth("CT", "123456789", known_dob: ~D[1992-03-01]) == ~D[1992-03-01]
+      dln = "151234567"
+      dob = ~D[1992-03-01]
+
+      assert DriversLicenseValidation.valid?("CT", dln)
+      assert DriversLicenseValidation.date_of_birth("CT", dln, known_dob: dob) == dob
     end
 
-    test "MT 14-digit DL with known DOB" do
-      assert DriversLicenseValidation.valid?("MT", "12345678901234")
-      assert DriversLicenseValidation.date_of_birth("MT", "12345678901234", known_dob: ~D[1978-10-30]) == ~D[1978-10-30]
+    test "MT DL with encoded DOB in 13-digit numeric format" do
+      dob = ~D[1992-03-09]
+      dln = "0300199241090"  # MM(03), filler(00), YYYY(1992), "41", DD(09), +1 digit
+      assert DriversLicenseValidation.valid?("MT", dln)
+      assert DriversLicenseValidation.date_of_birth("MT", dln, known_dob: dob) == dob
+    end
+
+    test "MT DL with 3 alpha + 10 numeric (format-only, no DOB decoding)" do
+      dln = "ABC1234567890"
+      dob = ~D[1990-01-01]
+      assert DriversLicenseValidation.valid?("MT", dln)
+      assert DriversLicenseValidation.date_of_birth("MT", dln, known_dob: dob) == dob
+    end
+
+    test "MT DL with 1 alpha + 8 numeric (format-only, no DOB decoding)" do
+      dln = "A12345678"
+      dob = ~D[1985-07-15]
+      assert DriversLicenseValidation.valid?("MT", dln)
+      assert DriversLicenseValidation.date_of_birth("MT", dln, known_dob: dob) == dob
+    end
+
+    test "MT DL with 9 numeric (format-only, no DOB decoding)" do
+      dln = "123456789"
+      dob = ~D[2000-12-31]
+      assert DriversLicenseValidation.valid?("MT", dln)
+      assert DriversLicenseValidation.date_of_birth("MT", dln, known_dob: dob) == dob
     end
 
     test "ND with 3 alpha + 6 digits and known DOB" do
@@ -86,6 +156,51 @@ defmodule DriversLicenseValidationTest do
       refute DriversLicenseValidation.valid?("IL", "12345678901")
     end
 
+    test "IL - standard format: wrong prefix (non-alpha)" do
+      # starts with a digit, should start with a letter
+      license = "185000000981"
+      refute DriversLicenseValidation.valid?("IL", license)
+      assert DriversLicenseValidation.date_of_birth("IL", license) == "N/A"
+    end
+
+    test "IL - standard format: too short" do
+      license = "I85000981"  # only 9 chars instead of 12
+      refute DriversLicenseValidation.valid?("IL", license)
+      assert DriversLicenseValidation.date_of_birth("IL", license) == "N/A"
+    end
+
+    test "IL - alt format: missing suffix" do
+      license = "12345685098"  # missing final alpha character
+      refute DriversLicenseValidation.valid?("IL", license)
+      assert DriversLicenseValidation.date_of_birth("IL", license) == "N/A"
+    end
+
+    test "IL - alt format: invalid prefix (contains letters)" do
+      license = "ABC12385098A"  # first 6 not fully numeric
+      refute DriversLicenseValidation.valid?("IL", license)
+      assert DriversLicenseValidation.date_of_birth("IL", license) == "N/A"
+    end
+
+    test "IL - alt format: suffix is not alpha" do
+      license = "123456850981"  # final char should be A-Z
+      refute DriversLicenseValidation.valid?("IL", license)
+      assert DriversLicenseValidation.date_of_birth("IL", license) == "N/A"
+    end
+
+    test "IL - valid-looking number but invalid state" do
+      license = "I85000000981"
+      refute DriversLicenseValidation.valid?("ZZ", license)
+      assert DriversLicenseValidation.date_of_birth("ZZ", license) == "N/A"
+    end
+
+    test "NH DL with wrong last name initial" do
+      number = "06ZHJ85091"  # Ends in '1' instead of 'X'
+      dob = ~D[1985-06-09]
+      fallback = dob
+      assert DriversLicenseValidation.valid?("NH", number)
+      assert DriversLicenseValidation.date_of_birth("NH", number, first_name: "John", last_name: "Smith", known_dob: fallback) == fallback
+    end
+
     test "Unknown state code" do
       refute DriversLicenseValidation.valid?("ZZ", "A1234567")
       assert DriversLicenseValidation.date_of_birth("ZZ", "A1234567") == "N/A"
@@ -94,6 +209,14 @@ defmodule DriversLicenseValidationTest do
     test "Valid format but no DOB extractor" do
       assert DriversLicenseValidation.valid?("OR", "123456789")
       assert DriversLicenseValidation.date_of_birth("OR", "123456789") == "N/A"
+    end
+
+    test "MT DL with incorrect DOB encoding (fails DOB match)" do
+      # Intentionally wrong: month should be 03 for DOB, but DLN says 04
+      dln = "0400199241090"  # Wrong MM = "04" instead of "03"
+      dob = ~D[1992-03-09]
+      assert DriversLicenseValidation.valid?("MT", dln)
+      assert DriversLicenseValidation.date_of_birth("MT", dln, known_dob: dob) == dob
     end
   end
 

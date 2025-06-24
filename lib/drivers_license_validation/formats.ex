@@ -49,7 +49,8 @@ defmodule DriversLicenseValidation.Formats do
       [{:numeric, 9}]
     ],
     "IL" => [
-      [{:alpha, 1}, {:numeric, 11, 12}]
+      [{:alpha, 1}, {:numeric, 11, 12}],
+      [{:numeric, 11, 12}, {:alpha, 1}]
     ],
     "IN" => [
       [{:alpha, 1}, {:numeric, 9}],
