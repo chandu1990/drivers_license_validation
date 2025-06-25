@@ -7,8 +7,11 @@ defmodule DriversLicenseValidation do
     abbr = State.normalize(state)
 
     case Formats.get(abbr) do
-      nil -> false
-      patterns -> Enum.any?(patterns, fn pattern -> match_pattern?(String.upcase(license), pattern) end)
+      nil ->
+        false
+
+      patterns ->
+        Enum.any?(patterns, fn pattern -> match_pattern?(String.upcase(license), pattern) end)
     end
   end
 

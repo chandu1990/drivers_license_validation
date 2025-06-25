@@ -1,14 +1,8 @@
 defmodule DriversLicenseValidation.MdMiDOBDecoder do
   @moduledoc """
   Encodes mapping of MD/MI license DOB segment codes to month/day.
-
-  This data comes from SQL rules that map specific 03-digit license codes
-  to known calendar dates (month and day).
   """
 
-  @doc """
-  Given a 03-digit code (as binary or string), returns {month, day} if known.
-  """
   @spec get_date_components(String.t()) :: {integer, integer} | nil
   def get_date_components(code) do
     code_to_date_map()[code]

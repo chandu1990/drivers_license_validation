@@ -2,19 +2,18 @@ defmodule DriversLicenseValidation.Formats do
   @moduledoc false
 
   @formats %{
-
     "AL" => [
-      [{:numeric, 1,8}]
+      [{:numeric, 1, 8}]
     ],
     "AK" => [
-      [{:numeric, 1,7}]
+      [{:numeric, 1, 7}]
     ],
     "AZ" => [
       [{:alpha, 1}, {:numeric, 8}],
       [{:numeric, 9}]
     ],
     "AR" => [
-      [{:numeric, 4,9}]
+      [{:numeric, 4, 9}]
     ],
     "CA" => [
       [{:alpha, 1}, {:numeric, 7}]
@@ -28,7 +27,7 @@ defmodule DriversLicenseValidation.Formats do
       [{:numeric, 9}]
     ],
     "DE" => [
-      [{:numeric, 1,7}]
+      [{:numeric, 1, 7}]
     ],
     "DC" => [
       [{:numeric, 7}],
@@ -38,7 +37,7 @@ defmodule DriversLicenseValidation.Formats do
       [{:alpha, 1}, {:numeric, 12}]
     ],
     "GA" => [
-      [{:numeric, 7,9}]
+      [{:numeric, 7, 9}]
     ],
     "HI" => [
       [{:alpha, 1}, {:numeric, 8}],
@@ -54,7 +53,7 @@ defmodule DriversLicenseValidation.Formats do
     ],
     "IN" => [
       [{:alpha, 1}, {:numeric, 9}],
-      [{:numeric, 9,10}]
+      [{:numeric, 9, 10}]
     ],
     "IA" => [
       [{:numeric, 9}],
@@ -71,7 +70,7 @@ defmodule DriversLicenseValidation.Formats do
       [{:numeric, 9}]
     ],
     "LA" => [
-      [{:numeric, 1,9}]
+      [{:numeric, 1, 9}]
     ],
     "ME" => [
       [{:numeric, 7}],
@@ -107,7 +106,7 @@ defmodule DriversLicenseValidation.Formats do
       [{:alpha, 3}, {:numeric, 10}],
       [{:alpha, 1}, {:numeric, 8}],
       [{:numeric, 9}],
-      [{:numeric, 13,14}]
+      [{:numeric, 13, 14}]
     ],
     "NE" => [
       [{:alpha, 1}, {:numeric, 6, 8}]
@@ -124,17 +123,17 @@ defmodule DriversLicenseValidation.Formats do
       [{:alpha, 1}, {:numeric, 14}]
     ],
     "NM" => [
-      [{:numeric, 8,9}]
+      [{:numeric, 8, 9}]
     ],
     "NY" => [
       [{:alpha, 1}, {:numeric, 7}],
       [{:alpha, 1}, {:numeric, 18}],
-      [{:numeric, 8,9}],
+      [{:numeric, 8, 9}],
       [{:numeric, 16}],
       [{:alpha, 8}]
     ],
     "NC" => [
-      [{:numeric, 1,12}]
+      [{:numeric, 1, 12}]
     ],
     "ND" => [
       [{:alpha, 3}, {:numeric, 6}],
@@ -150,7 +149,7 @@ defmodule DriversLicenseValidation.Formats do
       [{:numeric, 9}]
     ],
     "OR" => [
-      [{:numeric, 1,9}]
+      [{:numeric, 1, 9}]
     ],
     "PA" => [
       [{:numeric, 8}]
@@ -160,20 +159,20 @@ defmodule DriversLicenseValidation.Formats do
       [{:alpha, 1}, {:numeric, 6}]
     ],
     "SC" => [
-      [{:numeric, 5,11}]
+      [{:numeric, 5, 11}]
     ],
     "SD" => [
-      [{:numeric, 6,10}],
+      [{:numeric, 6, 10}],
       [{:numeric, 12}]
     ],
     "TN" => [
-      [{:numeric, 7,9}]
+      [{:numeric, 7, 9}]
     ],
     "TX" => [
-      [{:numeric, 7,8}]
+      [{:numeric, 7, 8}]
     ],
     "UT" => [
-      [{:numeric, 4,10}]
+      [{:numeric, 4, 10}]
     ],
     "VT" => [
       [{:numeric, 8}],
@@ -194,10 +193,9 @@ defmodule DriversLicenseValidation.Formats do
       [{:alpha, 1}, {:numeric, 13}]
     ],
     "WY" => [
-      [{:numeric, 9,10}]
-    ],
+      [{:numeric, 9, 10}]
+    ]
   }
-
 
   def get(state), do: Map.get(@formats, String.upcase(state))
 end

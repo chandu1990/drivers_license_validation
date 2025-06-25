@@ -1,4 +1,3 @@
-
 defmodule DriversLicenseValidation.State do
   @moduledoc false
 
