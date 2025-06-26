@@ -1,6 +1,21 @@
 defmodule DriversLicenseValidation do
   require Logger
-  alias DriversLicenseValidation.{Formats, State, DOBExtractors}
+  alias DriversLicenseValidation.{Formats, State, DOBExtractors, MatchEvaluator}
+
+  @spec valid_with_dob?(String.t(), String.t(), Date.t(), keyword()) :: boolean()
+  def valid_with_dob?(state, license, %Date{} = dob, ctx \\ []) do
+    abbr = State.normalize(state)
+
+    if valid?(abbr, license) do
+      if MatchEvaluator.dob_encoded_state?(abbr) do
+        MatchEvaluator.match?(abbr, license, dob, ctx)
+      else
+        true
+      end
+    else
+      false
+    end
+  end
 
   @spec valid?(String.t(), String.t()) :: boolean()
   def valid?(state, license) do
@@ -17,13 +32,9 @@ defmodule DriversLicenseValidation do
 
   @spec date_of_birth(String.t(), String.t(), keyword()) :: Date.t() | String.t()
   def date_of_birth(state, license, ctx \\ []) do
-    if valid?(state, license) do
-      case DOBExtractors.get(state) do
-        nil -> "N/A"
-        extractor -> extractor.(license, ctx)
-      end
-    else
-      "N/A"
+    case DOBExtractors.get(state) do
+      nil -> "N/A"
+      extractor -> extractor.(license, ctx)
     end
   end
 

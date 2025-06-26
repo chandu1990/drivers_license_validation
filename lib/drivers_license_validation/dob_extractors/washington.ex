@@ -10,21 +10,8 @@ defmodule DriversLicenseValidation.DOBExtractors.Washington do
     normalized_dln = String.replace(dl_number, "*", " ")
 
     case extract_wa_dob(normalized_dln, ctx) do
-      {:ok, dob} ->
-        dob
-
-      _ ->
-        Logger.warn("[DLValidator] WA DOB parse failed, using fallback if available")
-        fallback = Keyword.get(ctx, :known_dob)
-
-        case fallback do
-          %Date{} = date ->
-            date
-
-          other ->
-            Logger.warn("[DLValidator] Fallback value is not a Date: #{inspect(other)}")
-            "N/A"
-        end
+      {:ok, dob} -> dob
+      _ -> "N/A"
     end
   end
 
@@ -43,7 +30,7 @@ defmodule DriversLicenseValidation.DOBExtractors.Washington do
         with {y, _} <- Integer.parse(year_code),
              month when is_integer(month) <- month_char_to_number(month_char),
              day when is_integer(day) <- day_char_to_number(day_char),
-             {:ok, date} <- Date.new(1900 + (100 - y), month, day) do
+             {:ok, date} <- Date.new(Util.infer_full_year(y), month, day) do
           {:ok, date}
         else
           _ -> :error
