@@ -28,11 +28,11 @@ defmodule DriversLicenseValidation.DOBExtractors.NewJersey do
          {y, _} <- Integer.parse(yy),
          year <- Util.infer_full_year(y),
          {:ok, date} <- Date.new(year, month, 1) do
-      date
+      {:ok, date}
     else
       _ ->
         Logger.warn("[DLValidator] NJ DOB parse failed")
-        "N/A"
+        {:error, :parsing_error}
     end
   end
 end

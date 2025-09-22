@@ -1,6 +1,5 @@
 defmodule DriversLicenseValidation.DOBExtractors.Montana do
   require Logger
-  alias DriversLicenseValidation.Util
 
   @doc """
   Extracts DOB from MT license number.
@@ -15,13 +14,16 @@ defmodule DriversLicenseValidation.DOBExtractors.Montana do
         true <- yyyy == Integer.to_string(year),
         true <- dd == String.pad_leading(Integer.to_string(day), 2, "0") do
       case Date.new(year, month, day) do
-        {:ok, date} -> date
-        _ -> "N/A"
+        {:ok, date} -> {:ok, date}
+        _ -> {:error, :invalid_date}
       end
     else
       _ ->
         Logger.warn("[DLValidator] MT parse failed or insufficient context")
-        Keyword.get(ctx, :known_dob, "N/A")
+        case Keyword.get(ctx, :known_dob) do
+          %Date{} = date -> {:ok, date}
+          _ -> {:error, :parsing_error}
+        end
     end
   end
 end

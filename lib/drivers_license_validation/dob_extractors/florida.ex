@@ -6,7 +6,7 @@ defmodule DriversLicenseValidation.DOBExtractors.Florida do
   Extracts DOB from FL/WI license numbers using a YY + DOY encoding.
   Supports both 12-digit (FL) and 13-digit (WI) numeric structures.
   """
-  @spec extract(String.t(), keyword()) :: Date.t() | String.t()
+  @spec extract(String.t(), keyword()) :: {:ok, Date.t()} | {:error, atom()}
   def extract(dl, _ctx) do
     clean = String.replace(dl, "-", "")
 
@@ -20,11 +20,11 @@ defmodule DriversLicenseValidation.DOBExtractors.Florida do
       day_of_year = if code > 500, do: code - 500, else: code
 
       # Add DOY to January 1 to compute real date
-      Date.add(base, day_of_year - 1)
+      {:ok, Date.add(base, day_of_year - 1)}
     else
       _ ->
         Logger.warn("[DLValidator] FL/WI DOB parse failed")
-        "N/A"
+        {:error, :parsing_error}
     end
   end
 end

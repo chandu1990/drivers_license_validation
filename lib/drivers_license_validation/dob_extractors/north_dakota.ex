@@ -1,6 +1,5 @@
 defmodule DriversLicenseValidation.DOBExtractors.NorthDakota do
   require Logger
-  alias DriversLicenseValidation.Util
 
   @doc """
   Extracts DOB from ND license number.
@@ -18,11 +17,14 @@ defmodule DriversLicenseValidation.DOBExtractors.NorthDakota do
          expected_year2 = rem(year, 100) |> Integer.to_string() |> String.pad_leading(2, "0"),
          true <- dl_l3 == l3 and year2 == expected_year2,
          {:ok, date} <- Date.new(year, 1, 1) do
-      date
+      {:ok, date}
     else
       _ ->
         Logger.warn("[DLValidator] ND parse failed or insufficient context")
-        known_dob || "N/A"
+        case known_dob do
+          %Date{} = date -> {:ok, date}
+          _ -> {:error, :parsing_error}
+        end
     end
   end
 end

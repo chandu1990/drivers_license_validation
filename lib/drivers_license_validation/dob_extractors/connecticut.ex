@@ -1,6 +1,5 @@
 defmodule DriversLicenseValidation.DOBExtractors.Connecticut do
   require Logger
-  alias DriversLicenseValidation.Util
 
   @doc """
   Extracts DOB from CT license number.
@@ -23,16 +22,19 @@ defmodule DriversLicenseValidation.DOBExtractors.Connecticut do
 
       if encoded_month == expected_month do
         case Date.new(year, month, 1) do
-          {:ok, date} -> date
-          _ -> "N/A"
+          {:ok, date} -> {:ok, date}
+          _ -> {:error, :invalid_date}
         end
       else
-        "N/A"
+        {:error, :parsing_error}
       end
     else
       _ ->
         Logger.warn("[DLValidator] CT parse failed or insufficient context")
-        Keyword.get(ctx, :known_dob, "N/A")
+        case Keyword.get(ctx, :known_dob) do
+          %Date{} = date -> {:ok, date}
+          _ -> {:error, :parsing_error}
+        end
     end
   end
 end

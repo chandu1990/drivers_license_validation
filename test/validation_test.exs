@@ -105,7 +105,7 @@ defmodule DriversLicenseValidationTest do
          first_name: "Alice",
          last_name: "Brown",
          known_dob: mismatched_dob
-       ) == "N/A"
+       ) == {:error, :parsing_error}
 
       # But:
       refute DriversLicenseValidation.valid_with_dob?("WA", number, mismatched_dob)
@@ -156,6 +156,22 @@ defmodule DriversLicenseValidationTest do
 
     test "valid format but no DOB extractor" do
       assert DriversLicenseValidation.valid_with_dob?("OR", "123456789", ~D[1985-01-01])
+    end
+  end
+
+  # -- DATE OF BIRTH FUNCTION TESTS --
+  describe "date_of_birth function returns tuples" do
+    test "returns {:error, :invalid_state} for unknown state" do
+      assert DriversLicenseValidation.date_of_birth("ZZ", "A1234567") == {:error, :invalid_state}
+    end
+
+    test "returns {:ok, date} for valid FL extraction" do
+      number = "F850000010600"
+      assert {:ok, ~D[1985-04-16]} = DriversLicenseValidation.date_of_birth("FL", number)
+    end
+
+    test "returns {:error, :parsing_error} for invalid input" do
+      assert {:error, :parsing_error} = DriversLicenseValidation.date_of_birth("FL", "invalid")
     end
   end
 end

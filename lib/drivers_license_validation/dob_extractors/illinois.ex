@@ -3,10 +3,9 @@ defmodule DriversLicenseValidation.DOBExtractors.Illinois do
   alias DriversLicenseValidation.Util
 
   @doc """
-    Extracts DOB from IL license number.
+  Extracts DOB from IL license number.
   """
-
-  def extract(license, _ctx) do
+  def extract(license, ctx) do
     case license do
       # Match legacy/alt format: 11 numeric + 1 alpha
       # Example: "12345685098A" (YY = 85, DOY = 098)
@@ -15,8 +14,8 @@ defmodule DriversLicenseValidation.DOBExtractors.Illinois do
           # If prefix is numeric and suffix is alpha, it's a valid alt format
           parse_il_date(yy, doy, :alt)
         else
-          # Fallback to try standard if structure doesn’t match
-          try_standard_il(license, _ctx)
+          # Fallback to try standard if structure doesn't match
+          try_standard_il(license, ctx)
         end
 
       # Match standard format: 1 alpha + 11 numeric
@@ -28,7 +27,7 @@ defmodule DriversLicenseValidation.DOBExtractors.Illinois do
       # If neither format matched, return fallback
       _ ->
         Logger.warn("[DLValidator] IL DOB format not recognized")
-        "N/A"
+        {:error, :parsing_error}
     end
   end
 
@@ -49,16 +48,16 @@ defmodule DriversLicenseValidation.DOBExtractors.Illinois do
         # Return valid Date or fallback
         case Date.new(year, month, day) do
           {:ok, date} ->
-            date
+            {:ok, date}
 
           _ ->
             Logger.warn("[DLValidator] IL DOB parse failed: invalid date")
-            "N/A"
+            {:error, :invalid_date}
         end
 
       _ ->
         Logger.warn("[DLValidator] IL DOB parse failed: parse error")
-        "N/A"
+        {:error, :parsing_error}
     end
   end
 
@@ -71,5 +70,5 @@ defmodule DriversLicenseValidation.DOBExtractors.Illinois do
        do: parse_il_date(yy, doy, :standard)
 
   # If license structure doesn't match at all
-  defp try_standard_il(_, _), do: "N/A"
+  defp try_standard_il(_, _), do: {:error, :parsing_error}
 end

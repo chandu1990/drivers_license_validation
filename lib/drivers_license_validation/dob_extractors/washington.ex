@@ -10,8 +10,8 @@ defmodule DriversLicenseValidation.DOBExtractors.Washington do
     normalized_dln = String.replace(dl_number, "*", " ")
 
     case extract_wa_dob(normalized_dln, ctx) do
-      {:ok, dob} -> dob
-      _ -> "N/A"
+      {:ok, dob} -> {:ok, dob}
+      _ -> {:error, :parsing_error}
     end
   end
 

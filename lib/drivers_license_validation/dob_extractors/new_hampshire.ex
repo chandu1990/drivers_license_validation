@@ -1,6 +1,5 @@
 defmodule DriversLicenseValidation.DOBExtractors.NewHampshire do
   require Logger
-  alias DriversLicenseValidation.Util
 
   @doc """
   Extracts DOB from NH license number.
@@ -20,14 +19,17 @@ defmodule DriversLicenseValidation.DOBExtractors.NewHampshire do
          dd <- Integer.to_string(day) |> String.pad_leading(2, "0"),
          expected = mm <> lfirst <> llast <> ffirst <> yy <> dd do
       if prefix == expected do
-        Date.new(year, month, day)
+        {:ok, %Date{year: year, month: month, day: day}}
       else
-        "N/A"
+        {:error, :parsing_error}
       end
     else
       _ ->
         Logger.warn("[DLValidator] NH parse failed or insufficient context")
-        Keyword.get(ctx, :known_dob, "N/A")
+        case Keyword.get(ctx, :known_dob) do
+          %Date{} = date -> {:ok, date}
+          _ -> {:error, :parsing_error}
+        end
     end
   end
 end

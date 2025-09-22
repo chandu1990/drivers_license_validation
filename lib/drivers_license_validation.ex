@@ -30,10 +30,10 @@ defmodule DriversLicenseValidation do
     end
   end
 
-  @spec date_of_birth(String.t(), String.t(), keyword()) :: Date.t() | String.t()
+  @spec date_of_birth(String.t(), String.t(), keyword()) :: {:ok, Date.t()} | {:error, atom()}
   def date_of_birth(state, license, ctx \\ []) do
     case DOBExtractors.get(state) do
-      nil -> "N/A"
+      nil -> {:error, :invalid_state}
       extractor -> extractor.(license, ctx)
     end
   end

@@ -13,6 +13,9 @@ defmodule DriversLicenseValidation.MatchEvaluator do
 
   @spec match?(String.t(), String.t(), Date.t()) :: boolean()
   def match?(state, license, %Date{} = known_dob, ctx \\ []) do
-    DriversLicenseValidation.date_of_birth(state, license, Keyword.merge(ctx, known_dob: known_dob)) == known_dob
+    case DriversLicenseValidation.date_of_birth(state, license, Keyword.merge(ctx, known_dob: known_dob)) do
+      {:ok, extracted_dob} -> extracted_dob == known_dob
+      _ -> false
+    end
   end
 end
