@@ -7,7 +7,12 @@ defmodule DriversLicenseValidation.MixProject do
       version: "0.1.0",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      description: "Validates U.S. driver's license numbers per state",
+      package: package(),
+      name: "DriversLicenseValidation",
+      source_url: "https://github.com/chandu1990/drivers_license_validation",
+      docs: [main: "DriversLicenseValidation"]
     ]
   end
 
@@ -23,6 +28,13 @@ defmodule DriversLicenseValidation.MixProject do
     [
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+    ]
+  end
+
+  defp package do
+    [
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/chandu1990/drivers_license_validation"}
     ]
   end
 end
