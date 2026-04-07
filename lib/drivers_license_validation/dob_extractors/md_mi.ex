@@ -17,12 +17,12 @@ defmodule DriversLicenseValidation.DOBExtractors.MdMi do
         case Date.new(year, m, d) do
           {:ok, date} -> {:ok, date}
           _ ->
-            Logger.warn("[DLValidator] MD/MI date creation failed")
+            Logger.warning("[DLValidator] MD/MI date creation failed")
             {:error, :invalid_date}
         end
 
       _ ->
-        Logger.warn("[DLValidator] MD/MI DOB code not found")
+        Logger.warning("[DLValidator] MD/MI DOB code not found")
         {:error, :parsing_error}
     end
   end

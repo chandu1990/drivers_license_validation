@@ -5,7 +5,7 @@ defmodule DriversLicenseValidation.MixProject do
     [
       app: :drivers_license_validation,
       version: "0.1.0",
-      elixir: "~> 1.14",
+      elixir: "~> 1.19.4",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: "Validates U.S. driver's license numbers per state",

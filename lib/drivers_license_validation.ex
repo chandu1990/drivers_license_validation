@@ -1,5 +1,4 @@
 defmodule DriversLicenseValidation do
-  require Logger
   alias DriversLicenseValidation.{Formats, State, DOBExtractors, MatchEvaluator}
 
   @spec valid_with_dob?(String.t(), String.t(), Date.t(), keyword()) :: boolean()
@@ -78,7 +77,7 @@ defmodule DriversLicenseValidation do
 
   defp match_segment(license, [{:literal, lit} | rest]) do
     if String.starts_with?(license, lit) do
-      match_segment(String.slice(license, String.length(lit)..-1), rest)
+      match_segment(String.slice(license, String.length(lit)..-1//1), rest)
     else
       false
     end
@@ -87,10 +86,10 @@ defmodule DriversLicenseValidation do
   defp match_segment(_, _), do: false
 
   defp match_variable_length(license, min, max, validator, rest) do
-    Enum.any?(min..max, fn len ->
+    Enum.any?(min..max//1, fn len ->
       byte_size(license) >= len and
         validator.(String.slice(license, 0, len)) and
-        match_segment(String.slice(license, len..-1), rest)
+        match_segment(String.slice(license, len..-1//1), rest)
     end)
   end
 
