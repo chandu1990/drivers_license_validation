@@ -23,7 +23,7 @@ defmodule DriversLicenseValidation.DOBExtractors.Florida do
       {:ok, Date.add(base, day_of_year - 1)}
     else
       _ ->
-        Logger.warn("[DLValidator] FL/WI DOB parse failed")
+        Logger.warning("[DLValidator] FL/WI DOB parse failed")
         {:error, :parsing_error}
     end
   end

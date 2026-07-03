@@ -19,7 +19,7 @@ defmodule DriversLicenseValidation.DOBExtractors.Montana do
       end
     else
       _ ->
-        Logger.warn("[DLValidator] MT parse failed or insufficient context")
+        Logger.warning("[DLValidator] MT parse failed or insufficient context")
         case Keyword.get(ctx, :known_dob) do
           %Date{} = date -> {:ok, date}
           _ -> {:error, :parsing_error}

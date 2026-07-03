@@ -31,7 +31,7 @@ defmodule DriversLicenseValidation.DOBExtractors.NewJersey do
       {:ok, date}
     else
       _ ->
-        Logger.warn("[DLValidator] NJ DOB parse failed")
+        Logger.warning("[DLValidator] NJ DOB parse failed")
         {:error, :parsing_error}
     end
   end

@@ -25,7 +25,7 @@ defmodule DriversLicenseValidation.DOBExtractors.NewHampshire do
       end
     else
       _ ->
-        Logger.warn("[DLValidator] NH parse failed or insufficient context")
+        Logger.warning("[DLValidator] NH parse failed or insufficient context")
         case Keyword.get(ctx, :known_dob) do
           %Date{} = date -> {:ok, date}
           _ -> {:error, :parsing_error}

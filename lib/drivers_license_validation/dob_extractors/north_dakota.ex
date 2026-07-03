@@ -20,7 +20,7 @@ defmodule DriversLicenseValidation.DOBExtractors.NorthDakota do
       {:ok, date}
     else
       _ ->
-        Logger.warn("[DLValidator] ND parse failed or insufficient context")
+        Logger.warning("[DLValidator] ND parse failed or insufficient context")
         case known_dob do
           %Date{} = date -> {:ok, date}
           _ -> {:error, :parsing_error}

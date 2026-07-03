@@ -26,7 +26,7 @@ defmodule DriversLicenseValidation.DOBExtractors.Illinois do
 
       # If neither format matched, return fallback
       _ ->
-        Logger.warn("[DLValidator] IL DOB format not recognized")
+        Logger.warning("[DLValidator] IL DOB format not recognized")
         {:error, :parsing_error}
     end
   end
@@ -51,12 +51,12 @@ defmodule DriversLicenseValidation.DOBExtractors.Illinois do
             {:ok, date}
 
           _ ->
-            Logger.warn("[DLValidator] IL DOB parse failed: invalid date")
+            Logger.warning("[DLValidator] IL DOB parse failed: invalid date")
             {:error, :invalid_date}
         end
 
       _ ->
-        Logger.warn("[DLValidator] IL DOB parse failed: parse error")
+        Logger.warning("[DLValidator] IL DOB parse failed: parse error")
         {:error, :parsing_error}
     end
   end
